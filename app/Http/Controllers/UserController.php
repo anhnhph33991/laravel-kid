@@ -12,7 +12,7 @@ class UserController extends Controller
     {
         echo "Page home";
         ## P1:
-//        Yêu cầu 1: Truy vấn tất cả các bản ghi
+////        Yêu cầu 1: Truy vấn tất cả các bản ghi
         User::query()->orderByDesc('id')->ddRawSql();
 //        Yêu cầu 2: Truy vấn với điều kiện
         User::query()->where('age', '>', 25)->ddRawSql();
@@ -101,7 +101,18 @@ class UserController extends Controller
             ->select('e.first_name', 'e.last_name', 'd.department_name')
             ->ddRawSql();
 //        6:
-##        C1
+//        C1:
+        DB::table('employees as e')
+            ->join('departments as d', 'e.department_id', '=', 'd.department_id')
+            ->whereIn('e.salary', function ($query) {
+                $query->selectRaw('MAX(salary)')
+                    ->from('employees')
+                    ->whereColumn('department_id', 'e.department_id');
+            })
+            ->select('e.first_name', 'e.last_name', 'd.department_name')
+            ->ddRawSql();
+
+//        C2:
         $maxSalary = DB::table('employees')
             ->selectRaw('MAX(salary)')
             ->whereColumn('department_id', 'e.department_id');
@@ -111,6 +122,7 @@ class UserController extends Controller
             ->where(DB::raw('e.salary'), '=', $maxSalary)
             ->select('e.first_name', 'e.last_name', 'd.department_name')
             ->ddRawSql();
+
 //        7:
         // c1:
 
@@ -121,14 +133,12 @@ class UserController extends Controller
             ->select('e.first_name', 'e.last_name', 'd.department_name')
             ->ddRawSql();
 
-        // c1
-//        date_default_timezone_set('Asia/Ho_Chi_Minh');
-//        $data = DB::table('employees', 'e')
-//            ->join('departments as d', 'e.department_id', '=', 'd.department_id')
-//            ->where('e.hire_date', '<=', date('Y-m-d', strtotime('-3 years')))
-//            ->select('e.first_name', 'e.last_name', 'd.department_name')
-//            ->ddRawSql();
-        
-//        dd(Carbon::now(env('LARAVEL_ASIA_TIME'))->subYears(3));
+        // c2
+        DB::table('employees', 'e')
+            ->join('departments as d', 'e.department_id', '=', 'd.department_id')
+            ->where('e.hire_date', '<=', DB::raw('DATE_SUB(CURDATE(), INTERVAL 3 YEAR)'))
+            ->select('e.first_name', 'e.last_name', 'd.department_name')
+            ->ddRawSql();
+
     }
 }
