@@ -35,7 +35,7 @@ class UserController extends Controller
 //        Yêu cầu 8: Truy vấn với BETWEEN
         User::query()->whereBetween('amount ', [1000, 5000])->ddRawSql();
 //        Yêu cầu 9: Truy vấn với IN
-        User::query()->whereIn('department_id', [1,2,3])->get();
+        User::query()->whereIn('department_id', [1, 2, 3])->get();
 //        Yêu cầu 10: Thực hiện JOIN
         DB::table('orders')
             ->join('customers', 'orders.customer_id', '=', 'customers.id')
@@ -112,14 +112,7 @@ class UserController extends Controller
             ->select('e.first_name', 'e.last_name', 'd.department_name')
             ->ddRawSql();
 //        7:
-        // c1
-//        date_default_timezone_set('Asia/Ho_Chi_Minh');
-//        $data = DB::table('employees', 'e')
-//            ->join('departments as d', 'e.department_id', '=', 'd.department_id')
-//            ->where('e.hire_date', '<=', date('Y-m-d', strtotime('-3 years')))
-//            ->select('e.first_name', 'e.last_name', 'd.department_name')
-//            ->ddRawSql();
-        // c2:
+        // c1:
 
         $filterDate = Carbon::now(env('LARAVEL_ASIA_TIME'))->subYears(3);
         DB::table('employees', 'e')
@@ -128,6 +121,14 @@ class UserController extends Controller
             ->select('e.first_name', 'e.last_name', 'd.department_name')
             ->ddRawSql();
 
+        // c1
+//        date_default_timezone_set('Asia/Ho_Chi_Minh');
+//        $data = DB::table('employees', 'e')
+//            ->join('departments as d', 'e.department_id', '=', 'd.department_id')
+//            ->where('e.hire_date', '<=', date('Y-m-d', strtotime('-3 years')))
+//            ->select('e.first_name', 'e.last_name', 'd.department_name')
+//            ->ddRawSql();
+        
 //        dd(Carbon::now(env('LARAVEL_ASIA_TIME'))->subYears(3));
     }
 }
