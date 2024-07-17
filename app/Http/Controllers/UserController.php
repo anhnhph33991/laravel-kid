@@ -64,7 +64,8 @@ class UserController extends Controller
                 'quantity' => 10
             ]);
 //        Yêu cầu 15: Sử dụng Raw Expressions
-        DB::table('users')->whereRaw('MONTH(birth_date) = 5')->ddRawSql();
+        $month = 5;
+        DB::table('users')->whereRaw('MONTH(birth_date) = ?', [$month])->ddRawSql();
 
         ## P2:
 //        1:
@@ -119,7 +120,7 @@ class UserController extends Controller
 
         DB::table('employees as e')
             ->join('departments as d', 'e.department_id', '=', 'd.department_id')
-            ->where(DB::raw('e.salary'), '=', $maxSalary)
+            ->whereIn('e.salary', $maxSalary)
             ->select('e.first_name', 'e.last_name', 'd.department_name')
             ->ddRawSql();
 
