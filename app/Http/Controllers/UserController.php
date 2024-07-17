@@ -39,7 +39,7 @@ class UserController extends Controller
 //        Yêu cầu 10: Thực hiện JOIN
         DB::table('orders')
             ->join('customers', 'orders.customer_id', '=', 'customers.id')
-            ->select('orders.*', 'customers.name')
+            ->select('orders.*', 'customers.*')
             ->ddRawSql();
 //        Yêu cầu 11: Truy vấn với nhóm và tổng hợp
         DB::table('order_items')
@@ -120,9 +120,11 @@ class UserController extends Controller
 //            ->select('e.first_name', 'e.last_name', 'd.department_name')
 //            ->ddRawSql();
         // c2:
+
+        $filterDate = Carbon::now(env('LARAVEL_ASIA_TIME'))->subYears(3);
         DB::table('employees', 'e')
             ->join('departments as d', 'e.department_id', '=', 'd.department_id')
-            ->where('e.hire_date', '<=', Carbon::now(env('LARAVEL_ASIA_TIME'))->subYears(3))
+            ->where('e.hire_date', '<=', $filterDate)
             ->select('e.first_name', 'e.last_name', 'd.department_name')
             ->ddRawSql();
 
