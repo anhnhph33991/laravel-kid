@@ -137,7 +137,7 @@ class UserController extends Controller
         // c2
         DB::table('employees', 'e')
             ->join('departments as d', 'e.department_id', '=', 'd.department_id')
-            ->where('e.hire_date', '<=', DB::raw('DATE_SUB(CURDATE(), INTERVAL 3 YEAR)'))
+            ->whereRaw('e.hire_date <= DATE_SUB(CURDATE(), INTERVAL 3 YEAR)')
             ->select('e.first_name', 'e.last_name', 'd.department_name')
             ->ddRawSql();
 

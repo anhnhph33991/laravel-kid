@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +16,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [UserController::class, 'index']);
-Route::get('/home', [ProductController::class, 'index']);
+
+Route::prefix('admin')
+    ->name('admin.')
+    ->group(function(){
+        Route::get('/', function(){
+            echo "Dash Board Admin";
+        })->name('index');
+
+        Route::resource('products', ProductController::class);
+    });
