@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
@@ -105,22 +106,11 @@ class UserController extends Controller
 //        C1:
         DB::table('employees as e')
             ->join('departments as d', 'e.department_id', '=', 'd.department_id')
-            ->whereIn('e.salary', function ($query) {
+            ->where('e.salary', function (Builder $query) {
                 $query->selectRaw('MAX(salary)')
                     ->from('employees')
                     ->whereColumn('department_id', 'e.department_id');
             })
-            ->select('e.first_name', 'e.last_name', 'd.department_name')
-            ->ddRawSql();
-
-//        C2:
-        $maxSalary = DB::table('employees')
-            ->selectRaw('MAX(salary)')
-            ->whereColumn('department_id', 'e.department_id');
-
-        DB::table('employees as e')
-            ->join('departments as d', 'e.department_id', '=', 'd.department_id')
-            ->whereIn('e.salary', $maxSalary)
             ->select('e.first_name', 'e.last_name', 'd.department_name')
             ->ddRawSql();
 
@@ -130,7 +120,8 @@ class UserController extends Controller
         $filterDate = Carbon::now(env('LARAVEL_ASIA_TIME'))->subYears(3);
         DB::table('employees', 'e')
             ->join('departments as d', 'e.department_id', '=', 'd.department_id')
-            ->where('e.hire_date', '<=', $filterDate)
+//            ->where('e.hire_date', '<=', $filterDate)
+            ->whereRaw('e.hire_date <= ?', [$filterDate])
             ->select('e.first_name', 'e.last_name', 'd.department_name')
             ->ddRawSql();
 
